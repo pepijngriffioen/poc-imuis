@@ -85,3 +85,45 @@ Calling the service...
 mogelijke foutmelding: Kan een object van het type System.String niet converteren naar het type System.Byte[]. (CS312)
 Service call completed.
 ```
+
+Following the explanation: https://learn.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=windows&pivots=dotnet-8-0
+
+GOing to dockerize the app:
+```bash
+dotnet publish -c Release
+```
+Now adding a Dockerfile and building it:
+```bash
+docker build -t imuis-demo -f Dockerfile .
+```
+
+Run the container:
+```bash
+docker create --name imuis-poc imuis-demo
+```
+
+start the container:
+```bash
+docker start imuis-poc
+```
+
+changed the entrypoint to make the container able to easily change the runs.
+
+Now you can interactively use the container.
+```bash
+docker run -it -e CONTAINER_COMMAND="dotnet imuis-example.dll REPLACE_PARTNER_KEY REPLACE_OMGEVINGSCODE" imuis-demo
+```
+
+Added the pdf file via the wget in the build stage of the docker container, however that still did not fix it. Getting the error:
+```text
+Kan een object van het type System.String niet converteren naar het type System.Byte[]. (CS312)
+```
+
+
+Put the actions in a Makefile:
+```bash
+make build # build the container
+make run # runs the container -> before running replace the keys
+```
+
+
